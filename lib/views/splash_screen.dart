@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/views/addProducts_screen.dart';
+import 'package:woodie_admin/views/orders_screen.dart';
+import 'package:woodie_admin/views/productsList_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    gotoScreen(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +43,31 @@ class SplashScreen extends StatelessWidget {
                 const Text(
                   'Woodie',
                   style: TextStyle(
-                      color: kWhiteColor,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
+                    color: kWhiteColor,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
           SizedBox(
-            height: 0.03 * screenHeight,  
+            height: 0.03 * screenHeight,
           ),
           const CircularProgressIndicator(
             color: kWhiteColor,
+            strokeWidth: 3,
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> gotoScreen(BuildContext context) async {
+    await Future.delayed(const Duration(milliseconds: 1500));
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: ((context) => const ProductsList()),
       ),
     );
   }
