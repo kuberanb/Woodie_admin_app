@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:woodie_admin/palettes/colorPalettes.dart';
 import 'package:woodie_admin/views/addProducts_screen.dart';
+import 'package:woodie_admin/views/bottom_navigation_screen.dart';
+import 'package:woodie_admin/views/login_screen.dart';
+import 'package:woodie_admin/views/order_status.dart';
 import 'package:woodie_admin/views/orders_screen.dart';
 import 'package:woodie_admin/views/productsList_screen.dart';
 
@@ -67,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 1500));
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: ((context) => const ProductsList()),
+        builder: ((context) => const NavigationScreen()),
       ),
     );
   }

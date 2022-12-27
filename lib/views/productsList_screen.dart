@@ -22,7 +22,7 @@ class ProductsList extends StatelessWidget {
       body: ListView.builder(
         itemCount: 20,
         itemBuilder: ((context, index) => ProductsListTile(
-            productTitle: 'Sofa', productPrice: 5000, categoryName: 'Chair')),
+            productTitle: 'Sofa', productPrice: 5000, categoryName: 'Chair',imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUMcNr5fCViBNjtVHJzweed6ViZ4BzRFLzw&usqp=CAU',)),
       ),
     );
   }
@@ -32,11 +32,12 @@ class ProductsListTile extends StatelessWidget {
   String productTitle;
   int productPrice;
   String categoryName;
+  String imageUrl;
   ProductsListTile(
       {super.key,
       required this.productTitle,
       required this.productPrice,
-      required this.categoryName});
+      required this.categoryName,required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,7 @@ class ProductsListTile extends StatelessWidget {
                 ),
               ),
               leading: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUMcNr5fCViBNjtVHJzweed6ViZ4BzRFLzw&usqp=CAU',
+                imageUrl,
                 errorBuilder: ((context, error, stackTrace) =>
                     Image.asset('assets/images/logo.jpeg')),
                 fit: BoxFit.cover,

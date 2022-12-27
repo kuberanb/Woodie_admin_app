@@ -168,7 +168,7 @@ class AddProducts extends StatelessWidget {
                 'Submit',
                 style: TextStyle(fontSize: 20),
               ),
-            )
+            ),
           ],
         ),
       ),
