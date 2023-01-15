@@ -2,7 +2,7 @@ import 'package:another_stepper/widgets/another_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:woodie_admin/controllers/orderStatus_controller.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/views/productsList_screen.dart';
 
 class OrderStatus extends StatelessWidget {
@@ -38,6 +38,8 @@ class OrderStatus extends StatelessWidget {
               imageUrl:
                   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-Nt1XqnxEtDifFYK_alfVj8nafXSp7k9hA&usqp=CAU',
             ),
+
+
             Padding(
               padding: const EdgeInsets.only(left:16.0,right:8),
               child: AnotherStepper( 
@@ -52,7 +54,9 @@ class OrderStatus extends StatelessWidget {
                 // iconHeight:
                 //     40,  
               ), 
-            ) 
+            ),
+            
+             
           ],
         ),
       ),

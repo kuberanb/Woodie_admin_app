@@ -1,15 +1,39 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:woodie_admin/controllers/addProductController.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:woodie_admin/controllers/services/addProductController.dart';
+import 'package:woodie_admin/core/constants.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
+import 'package:woodie_admin/functions/miscellaneous_functions.dart';
+import 'package:woodie_admin/models/product_model.dart';
 
-class AddProducts extends StatelessWidget {
+String? categoryValue = '';
+UploadTask? uploadTask;
+// XFile? image;
+List<XFile> imageArray = [];
+final picker = ImagePicker();
+List<String> urlDownloadList = [];
+
+class AddProducts extends StatefulWidget {
   const AddProducts({super.key});
 
   @override
+  State<AddProducts> createState() => _AddProductsState();
+}
+
+class _AddProductsState extends State<AddProducts> {
+  @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     final productController = Get.put(AddProductController());
+    final formKey = GlobalKey<FormState>();
+
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -22,157 +46,264 @@ class AddProducts extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Stack(children: [
-                Container(
-                  height: 0.18 * screenHeight,
-                  width: double.infinity,
-                  color: kGreyColor,
-                ),
-                Positioned(
-                  right: 18,
-                  bottom: 18,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: kListTileColor,
-                      size: 50,
-                    ),
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              Padding(
+                  padding: EdgeInsets.only(
+                    right: 0.04 * screenWidth,
+                    left: 0.04 * screenWidth,
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Select Images',
+                        style: TextStyle(
+                          color: kWhiteColor,
+                          fontSize: 18,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          await openGallery();
+                        },
+                        icon: const Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: kWhiteColor,
+                          size: 40,
+                        ),
+                      ),
+                    ],
+                  )),
+              SizedBox(
+                height: 0.02 * screenHeight,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  right: 0.02 * screenWidth,
+                  left: 0.02 * screenWidth,
                 ),
-              ]),
-            ),
-            SizedBox(
-              height: 0.02 * screenHeight,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: productController.titleController,
-                style: const TextStyle(color: kWhiteColor),
-                decoration: InputDecoration(
-                  fillColor: kListTileColor,
-                  filled: true,
-                  hintText: 'Product Name',
-                  hintStyle: const TextStyle(color: kWhiteColor),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
+                child: TextFormField(
+                  controller: productController.titleController,
+                  style: const TextStyle(color: kWhiteColor),
+                  decoration: InputDecoration(
+                    fillColor: kListTileColor,
+                    filled: true,
+                    hintText: 'Product Name',
+                    hintStyle: const TextStyle(color: kWhiteColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: productController.priceController,
-                style: const TextStyle(color: kWhiteColor),
-                decoration: InputDecoration(
-                  fillColor: kListTileColor,
-                  filled: true,
-                  hintText: 'Product Price',
-                  hintStyle: const TextStyle(color: kWhiteColor),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: productController.priceController,
+                  style: const TextStyle(color: kWhiteColor),
+                  decoration: InputDecoration(
+                    fillColor: kListTileColor,
+                    filled: true,
+                    hintText: 'Product Price',
+                    hintStyle: const TextStyle(color: kWhiteColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
-                    ),
-                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter price';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: productController.availableQuantity,
-                style: const TextStyle(color: kWhiteColor),
-                decoration: InputDecoration(
-                  fillColor: kListTileColor,
-                  filled: true,
-                  hintText: 'Available Quantity',
-                  hintStyle: const TextStyle(color: kWhiteColor),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: productController.availableQuantity,
+                  style: const TextStyle(
+                    color: kWhiteColor,
+                  ),
+                  decoration: InputDecoration(
+                    fillColor: kListTileColor,
+                    filled: true,
+                    hintText: 'Available Quantity',
+                    hintStyle: const TextStyle(
+                      color: kWhiteColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
-                    ),
-                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter some quantity';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                maxLines: 5,
-                controller: productController.descriptionController,
-                style: const TextStyle(color: kWhiteColor),
-                decoration: InputDecoration(
-                  fillColor: kListTileColor,
-                  filled: true,
-                  hintText: 'Description',
-                  hintStyle: const TextStyle(color: kWhiteColor),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  maxLines: 5,
+                  controller: productController.descriptionController,
+                  style: const TextStyle(color: kWhiteColor),
+                  decoration: InputDecoration(
+                    fillColor: kListTileColor,
+                    filled: true,
+                    hintText: 'Description',
+                    hintStyle: const TextStyle(color: kWhiteColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(
+                        color: kBlackColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(
-                      color: kBlackColor,
-                      width: 2.0,
-                    ),
-                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            const CustomDropDownButton(),
-            ElevatedButton(
-              onPressed: () {},
-              style: ButtonStyle(
+              const CustomDropDownButton(),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await uploadImagestoFirebase();
+                    await FirebaseFirestore.instance
+                        .collection(productsCollection)
+                        .doc()
+                        .set(
+                          ProductModel(
+                            productCategory: categoryValue,
+                            productDescription:
+                                productController.descriptionController.text,
+                            productId: DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(),
+                            productImages: urlDownloadList,
+                            productName: productController.titleController.text,
+                            productPrice: int.parse(
+                                productController.priceController.text),
+                          ).toJson(),
+                        );
+                    errorSnackBar('Product Data Added Sucessfully', context);
+                  } catch (e) {
+                    errorSnackBar(e.toString(), context);
+                  }
+                },
+                style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(kListTileColor)),
-              child: const Text(
-                'Submit',
-                style: TextStyle(fontSize: 20),
+                      MaterialStateProperty.all<Color>(kListTileColor),
+                ),
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 20),
+                ),
               ),
-            ),
-          ],
+
+              
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  openGallery() async {
+    List<XFile?> image = await picker.pickMultiImage();
+    if (image.isEmpty) {
+      errorSnackBar('Image is not selected, select again', context);
+    }
+    if (image.isEmpty) {
+      return;
+    }
+    for (var img in image) {
+      imageArray.add(img!);
+    }
+    errorSnackBar('Image Selected Sucessfully', context);
+
+    // setState(() {
+    //   imageArray;
+    // });
+  }
+
+  uploadImagestoFirebase() async {
+    if (imageArray.isEmpty) {
+      imageArray = [];
+    } else {
+      for (var image in imageArray) {
+        final path = 'images/${image.name}';
+        final file = File(image.path);
+
+        final ref =
+            FirebaseStorage.instance.ref().child('products').child(path);
+        // .putFile(file);
+
+        uploadTask = ref.putFile(file);
+
+        final snapshot = await uploadTask!.whenComplete(() {});
+        final urlDownload = await snapshot.ref.getDownloadURL();
+        log('Download Link: $urlDownload');
+        urlDownloadList.add(urlDownload);
+      }
+      if (urlDownloadList.isNotEmpty) {
+        errorSnackBar('Image uploaded Sucessfully', context);
+      } else {
+        errorSnackBar('Image uploading is not sucessful,upload again', context);
+      }
+    }
   }
 }
 
@@ -220,6 +351,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
             onChanged: ((value) {
               setState(() {
                 selectedValue = value;
+                categoryValue = value;
               });
             }),
           ),

@@ -1,7 +1,7 @@
 import 'package:another_stepper/another_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 
 class OrderStatusController extends GetxController {
   List<StepperData> orderStatusData = [

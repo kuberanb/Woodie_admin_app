@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:woodie_admin/controllers/bottomNavigationController.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 
 class NavigationScreen extends StatelessWidget {
   const NavigationScreen({super.key});

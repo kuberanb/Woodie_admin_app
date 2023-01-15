@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 
 class EditProductDetails extends StatelessWidget {
   const EditProductDetails({super.key});

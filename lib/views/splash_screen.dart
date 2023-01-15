@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/views/addProducts_screen.dart';
 import 'package:woodie_admin/views/bottom_navigation_screen.dart';
 import 'package:woodie_admin/views/login_screen.dart';

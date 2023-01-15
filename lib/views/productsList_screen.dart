@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/views/edit_productDetails.dart';
 
 class ProductsList extends StatelessWidget {

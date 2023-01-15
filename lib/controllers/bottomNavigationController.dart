@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:woodie_admin/palettes/colorPalettes.dart';
+import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/views/addProducts_screen.dart';
 import 'package:woodie_admin/views/orders_screen.dart';
 import 'package:woodie_admin/views/productsList_screen.dart';
