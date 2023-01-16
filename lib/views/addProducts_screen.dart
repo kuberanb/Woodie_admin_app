@@ -12,12 +12,14 @@ import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/functions/miscellaneous_functions.dart';
 import 'package:woodie_admin/models/product_model.dart';
 
-String? categoryValue = '';
+String? categoryValue = 'Sofa';
 UploadTask? uploadTask;
 // XFile? image;
 List<XFile> imageArray = [];
+List<XFile>? tempImageArrayList = [];
 final picker = ImagePicker();
 List<String> urlDownloadList = [];
+bool isUpload = false;
 
 class AddProducts extends StatefulWidget {
   const AddProducts({super.key});
@@ -108,6 +110,12 @@ class _AddProductsState extends State<AddProducts> {
                       ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter Name';
+                    }
+                    return null;
+                  },
                 ),
               ),
               Padding(
@@ -217,43 +225,79 @@ class _AddProductsState extends State<AddProducts> {
                 ),
               ),
               const CustomDropDownButton(),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await uploadImagestoFirebase();
-                    await FirebaseFirestore.instance
-                        .collection(productsCollection)
-                        .doc()
-                        .set(
-                          ProductModel(
-                            productCategory: categoryValue,
-                            productDescription:
-                                productController.descriptionController.text,
-                            productId: DateTime.now()
-                                .millisecondsSinceEpoch
-                                .toString(),
-                            productImages: urlDownloadList,
-                            productName: productController.titleController.text,
-                            productPrice: int.parse(
-                                productController.priceController.text),
-                          ).toJson(),
-                        );
-                    errorSnackBar('Product Data Added Sucessfully', context);
-                  } catch (e) {
-                    errorSnackBar(e.toString(), context);
-                  }
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(kListTileColor),
-                ),
-                child: const Text(
-                  'Submit',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 0.1 * screenWidth,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        if (formKey.currentState!.validate()) {
+                          await uploadImagestoFirebase();
+                          if (tempImageArrayList != null &&
+                              tempImageArrayList!.isNotEmpty) {
+                            await FirebaseFirestore.instance
+                                .collection(productsCollection)
+                                .doc()
+                                .set(
+                                  ProductModel(
+                                    productCategory: categoryValue,
+                                    productDescription: productController
+                                        .descriptionController.text,
+                                    productId: DateTime.now()
+                                        .millisecondsSinceEpoch
+                                        .toString(),
+                                    productImages: urlDownloadList,
+                                    productName:
+                                        productController.titleController.text,
+                                    productPrice: int.parse(
+                                        productController.priceController.text),
+                                  ).toJson(),
+                                );
 
-              
+                            setState(() {
+                              isUpload = false;
+                            });
+                            productController.titleController.clear();
+                            productController.priceController.clear();
+                            productController.availableQuantity.clear();
+                            productController.descriptionController.clear();
+                            urlDownloadList.clear();
+                            imageArray.clear();
+                            tempImageArrayList?.clear();
+                            errorSnackBar(
+                                'Product Data Added Sucessfully', context);
+                          } else {
+                            errorSnackBar('Select Images', context);
+                            setState(() {
+                              isUpload = false;
+                            });
+                          }
+                        }
+                      } catch (e) {
+                        errorSnackBar(e.toString(), context);
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(kListTileColor),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  SizedBox(width: 0.1 * screenWidth),
+                  (isUpload == true)
+                      ? const CircularProgressIndicator(
+                          color: kWhiteColor,
+                          strokeWidth: 2,
+                        )
+                      : const SizedBox(),
+                ],
+              ),
             ],
           ),
         ),
@@ -271,6 +315,7 @@ class _AddProductsState extends State<AddProducts> {
     }
     for (var img in image) {
       imageArray.add(img!);
+      tempImageArrayList!.add(img);
     }
     errorSnackBar('Image Selected Sucessfully', context);
 
@@ -280,6 +325,9 @@ class _AddProductsState extends State<AddProducts> {
   }
 
   uploadImagestoFirebase() async {
+    setState(() {
+      isUpload = true;
+    });
     if (imageArray.isEmpty) {
       imageArray = [];
     } else {
@@ -301,6 +349,9 @@ class _AddProductsState extends State<AddProducts> {
       if (urlDownloadList.isNotEmpty) {
         errorSnackBar('Image uploaded Sucessfully', context);
       } else {
+        // setState(() {
+        //   isUpload = false;
+        // });
         errorSnackBar('Image uploading is not sucessful,upload again', context);
       }
     }
