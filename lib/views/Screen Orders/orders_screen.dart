@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:woodie_admin/core/palettes/colorPalettes.dart';
-import 'package:woodie_admin/views/order_status.dart';
+import 'package:woodie_admin/views/Screen%20Orders/order_status.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});

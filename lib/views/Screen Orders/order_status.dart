@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:woodie_admin/controllers/orderStatus_controller.dart';
 import 'package:woodie_admin/core/palettes/colorPalettes.dart';
-import 'package:woodie_admin/views/productsList_screen.dart';
+import 'package:woodie_admin/views/Screen%20Product%20List/productsList_screen.dart';
 
 class OrderStatus extends StatelessWidget {
   const OrderStatus({super.key});
@@ -36,7 +36,7 @@ class OrderStatus extends StatelessWidget {
               productPrice: 300, 
               categoryName: 'Other',
               imageUrl:
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-Nt1XqnxEtDifFYK_alfVj8nafXSp7k9hA&usqp=CAU',
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-Nt1XqnxEtDifFYK_alfVj8nafXSp7k9hA&usqp=CAU', productFullScreenFunc: () {  }, productDeleteFunc: () {  },
             ),
 
 
