@@ -14,7 +14,7 @@ const kBlueColor = Colors.blue;
 
 const kspecialGrey = Color(0xFF4b4e54); 
 
-const kLightGreen = Colors.green;
+const kLightGreen = Color.fromARGB(255, 47, 142, 50);
 
 const kRedColor = Colors.red;
 
@@ -29,4 +29,8 @@ const kLightWhiteColor = Color.fromARGB(255, 214, 214, 214);
 const kcategoryIconBorderColor = Color.fromARGB(255, 41, 40, 40);  
 
 const kExtraLightWhiteColor = Color.fromARGB(235, 179, 178, 178);  
+
+const kLightRedColor = Color.fromARGB(255, 159, 32, 23);
+
+
  

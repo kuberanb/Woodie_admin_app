@@ -3,7 +3,6 @@ import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/views/Screen%20Add%20Products/addProducts_screen.dart';
 import 'package:woodie_admin/views/Screen%20Navigation/bottom_navigation_screen.dart';
 import 'package:woodie_admin/views/login_screen.dart';
-import 'package:woodie_admin/views/Screen%20Orders/order_status.dart';
 import 'package:woodie_admin/views/Screen%20Orders/orders_screen.dart';
 import 'package:woodie_admin/views/Screen%20Product%20List/productsList_screen.dart';
 

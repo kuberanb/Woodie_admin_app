@@ -1,9 +1,27 @@
 import 'package:another_stepper/another_stepper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:woodie_admin/core/constants.dart';
 import 'package:woodie_admin/core/palettes/colorPalettes.dart';
+import 'package:woodie_admin/models/order_model.dart';
 
-class OrderStatusController extends GetxController {
+class OrderController extends GetxController {
+
+   final deliverStageController = TextEditingController();
+
+
+
+  Stream<List<OrderModel>> getAllOrders() {
+    return FirebaseFirestore.instance.collection(orders).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map(
+                (e) => OrderModel.fromJson(e.data()),
+              )
+              .toList(),
+        );
+  }
+
   List<StepperData> orderStatusData = [
     StepperData(
       title: StepperText(
@@ -22,7 +40,10 @@ class OrderStatusController extends GetxController {
       // ),
     ),
     StepperData(
-      title: StepperText("Packed",textStyle: const TextStyle(color: kWhiteColor),),
+      title: StepperText(
+        "Packed",
+        textStyle: const TextStyle(color: kWhiteColor),
+      ),
       subtitle: StepperText("Your order is being prepared"),
       // iconWidget: Container(
       //   padding: const EdgeInsets.all(2),
@@ -33,7 +54,10 @@ class OrderStatusController extends GetxController {
       // ),
     ),
     StepperData(
-      title: StepperText("Shipped",textStyle: const TextStyle(color: kWhiteColor),),
+      title: StepperText(
+        "Shipped",
+        textStyle: const TextStyle(color: kWhiteColor),
+      ),
       subtitle: StepperText("Your Order is Shipped "),
       // iconWidget: Container(
       //   padding: const EdgeInsets.all(2),
@@ -44,7 +68,10 @@ class OrderStatusController extends GetxController {
       // ),
     ),
     StepperData(
-      title: StepperText("Out for Delivery",textStyle: const TextStyle(color: kWhiteColor),),
+      title: StepperText(
+        "Out for Delivery",
+        textStyle: const TextStyle(color: kWhiteColor),
+      ),
       subtitle: StepperText(
           "Our Delivery executive is on the way to deliver the item"),
       // iconWidget: Container(
@@ -62,7 +89,7 @@ class OrderStatusController extends GetxController {
           color: kWhiteColor,
         ),
       ),
-      // iconWidget: Container( 
+      // iconWidget: Container(
       //   padding: const EdgeInsets.all(2),
       //   decoration: const BoxDecoration(
       //     color: kBlueColor,

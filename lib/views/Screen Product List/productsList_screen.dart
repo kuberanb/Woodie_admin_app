@@ -5,7 +5,6 @@ import 'package:woodie_admin/controllers/product_list_controller.dart';
 import 'package:woodie_admin/core/constants.dart';
 import 'package:woodie_admin/core/palettes/colorPalettes.dart';
 import 'package:woodie_admin/functions/miscellaneous_functions.dart';
-import 'package:woodie_admin/views/Screen%20Product%20List/edit_productDetails.dart';
 import 'package:woodie_admin/views/Screen%20Product%20List/product_full_screeen.dart';
 
 class ProductsList extends StatelessWidget {
@@ -25,6 +24,16 @@ class ProductsList extends StatelessWidget {
           'Products List',
           style: TextStyle(color: kWhiteColor, fontSize: 22),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.exit_to_app_sharp,
+              color: kWhiteColor,
+              size: 30,
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder(
         stream: controller.getHomeProducts(),
@@ -36,53 +45,66 @@ class ProductsList extends StatelessWidget {
               ),
             );
           } else if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: ((context, index) => ProductsListTile(
-                    productTitle: snapshot.data?.docs[index]['productName'],
-                    productPrice: snapshot.data?.docs[index]['productPrice'],
-                    categoryName: snapshot.data?.docs[index]['productCategory'],
-                    imageUrl:
-                        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUMcNr5fCViBNjtVHJzweed6ViZ4BzRFLzw&usqp=CAU'
-                        snapshot.data?.docs[index]['productImages'][0],
-                    productFullScreenFunc: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: ((context) => SelectedProductFullScreen(
-                                productName: snapshot.data?.docs[index]
-                                    ['productName'],
-                                productPrice: snapshot.data?.docs[index]
-                                    ['productPrice'],
-                                productDescription: snapshot.data?.docs[index]
-                                    ['productDescription'],
-                                productImageList: snapshot.data?.docs[index]
-                                    ['productImages'],
-                              )),
-                        ),
-                      );
-                    },
-                    productDeleteFunc: () {
-                      showProductDeleteBottonSheet(
-                          context: context,
-                          screenHeight: screenHeight,
-                          logOutFunction: () async {
-                            try {
-                              var docId = snapshot.data?.docs[index].id;
-                              await FirebaseFirestore.instance
-                                  .collection(productsCollection)
-                                  .doc(docId)
-                                  .delete();
-                              Navigator.of(context).pop();
-                              errorSnackBar(
-                                  'Product Deleted Sucessfully', context);
-                            } catch (e) {
-                              errorSnackBar(e.toString(), context);
-                            }
-                          },
-                          screenWidth: screenWidth);
-                    },
-                  )),
-            );
+            if (snapshot.data!.docs.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No Products is Added',
+                  style: TextStyle(
+                    color: kWhiteColor,
+                    fontSize: 20,
+                  ),
+                ),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: ((context, index) => ProductsListTile(
+                      productTitle: snapshot.data?.docs[index]['productName'],
+                      productPrice: snapshot.data?.docs[index]['productPrice'],
+                      categoryName: snapshot.data?.docs[index]
+                          ['productCategory'],
+                      imageUrl:
+                          // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUMcNr5fCViBNjtVHJzweed6ViZ4BzRFLzw&usqp=CAU'
+                          snapshot.data?.docs[index]['productImages'][0],
+                      productFullScreenFunc: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: ((context) => SelectedProductFullScreen(
+                                  productName: snapshot.data?.docs[index]
+                                      ['productName'],
+                                  productPrice: snapshot.data?.docs[index]
+                                      ['productPrice'],
+                                  productDescription: snapshot.data?.docs[index]
+                                      ['productDescription'],
+                                  productImageList: snapshot.data?.docs[index]
+                                      ['productImages'],
+                                )),
+                          ),
+                        );
+                      },
+                      productDeleteFunc: () {
+                        showProductDeleteBottonSheet(
+                            context: context,
+                            screenHeight: screenHeight,
+                            logOutFunction: () async {
+                              try {
+                                var docId = snapshot.data?.docs[index].id;
+                                await FirebaseFirestore.instance
+                                    .collection(productsCollection)
+                                    .doc(docId)
+                                    .delete();
+                                Navigator.of(context).pop();
+                                errorSnackBar(
+                                    'Product Deleted Sucessfully', context);
+                              } catch (e) {
+                                errorSnackBar(e.toString(), context);
+                              }
+                            },
+                            screenWidth: screenWidth);
+                      },
+                    )),
+              );
+            }
           } else {
             return const Center(
               child: Text(

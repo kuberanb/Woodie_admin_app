@@ -44,6 +44,16 @@ class _AddProductsState extends State<AddProducts> {
           'Add Products',
           style: TextStyle(color: kWhiteColor, fontSize: 22),
         ),
+        actions: [
+          IconButton( 
+            onPressed: () {},
+            icon: const Icon(
+              Icons.exit_to_app_sharp,
+              color: kWhiteColor,
+              size: 30,
+            ),
+          ),
+        ],
         centerTitle: true,
         elevation: 0,
       ),
