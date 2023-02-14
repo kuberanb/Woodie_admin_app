@@ -166,9 +166,10 @@ class OrderSettings extends StatelessWidget {
                                   .doc(orderItem.orderId)
                                   .update({
                                 'isCompleted': true,
+                                'deliveryProcessStage': 5,
                                 'isCancelled': false,
                               });
-
+                              log('''isCompleted': true, 'deliveryProcessStage':5 'isCancelled': false ''');
                               errorSnackBar(
                                   'Order Completed Sucessfully', context);
                             } catch (e) {
